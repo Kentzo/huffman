@@ -36,24 +36,26 @@ class Huffman:
     def encode(self, string):
         self.buildTable(string)
         result = ''.join([self.table[i] for i in string])
+        rev_table = {}
+        for key, value in self.table.items():
+            rev_table.update({value : key})
         codeword = ''
         offset = counter = 0
         for i in result:
             codeword += i
             counter += 1     
             offset += 1
-            if self.table.has_key(codeword) and counter < self.block_size * 8:
+            if rev_table.has_key(codeword) and counter <= self.block_size * 8:
                 codeword = ''
                 offset = 0
-            elif not self.table.has_key(codeword) and counter == self.block_size * 8:
-                codeword = ''
+                if counter == self.block_size * 8:
+                    self.offsets.append(0)
+                    counter = 0
+            elif not rev_table.has_key(codeword) and counter == self.block_size * 8:
                 self.offsets.append(offset)
                 offset = 0
-            if counter == self.block_size * 8:
                 counter = 0
-                self.offsets.append(0)
-            return result
-
+        return result
 
 h = Huffman()
 print h.encode('addddddddddddddd33333333333333444444444444fffffffffffvvvvvvvvbc')
