@@ -18,7 +18,10 @@ class Huffman:
 
     def buildKeys(self, root, code=''):
         if len(root) == 2:
-            self.table.update({root[1] : code})
+            if len(code):
+                self.table.update({root[1] : code})
+            else:
+                self.table.update({root[1] : '0'})
         else:
             self.buildKeys(root[1], code + '0')
             self.buildKeys(root[2], code + '1')
