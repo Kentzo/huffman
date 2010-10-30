@@ -8,7 +8,7 @@ class Huffman:
     def __init__(self):
         self.table = {}
         self.rev_table = {}
-        self.block_size = 1
+        self.block_size = 32
         self.offsets = []
 
     def buildTree(self, string):
