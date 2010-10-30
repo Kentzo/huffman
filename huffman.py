@@ -7,6 +7,8 @@ __author__ = 'Kulakov Ilya'
 class Huffman:
     def __init__(self):
         self.table = {}
+        self.block_size = 1
+        self.offsets = []
 
     def buildTree(self, string):
         tree = [(freq, sym) for (sym, freq) in Counter(string).most_common()]
@@ -30,5 +32,33 @@ class Huffman:
         self.table = {}
         self.buildTree(string)
         self.buildKeys(self.tree[0])
+
+    def encode(self, string):
+        self.buildTable(string)
+        result = ''.join([self.table[i] for i in string])
+        codeword = ''
+        offset = counter = 0
+        for i in result:
+            codeword += i
+            counter += 1     
+            offset += 1
+            if self.table.has_key(codeword) and counter < self.block_size * 8:
+                codeword = ''
+                offset = 0
+            elif not self.table.has_key(codeword) and counter == self.block_size * 8:
+                codeword = ''
+                self.offsets.append(offset)
+                offset = 0
+            if counter == self.block_size * 8:
+                counter = 0
+                self.offsets.append(0)
+            return result
+
+
+h = Huffman()
+print h.encode('addddddddddddddd33333333333333444444444444fffffffffffvvvvvvvvbc')
+print h.table
+print h.offsets
+            
 
 
