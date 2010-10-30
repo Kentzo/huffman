@@ -1,4 +1,4 @@
-from collections import Counter
+from counter import Counter
 from heapq import *
 import pyopencl as cl
 
