@@ -81,19 +81,22 @@ class Huffman:
         return result
 
 h = Huffman()
-text_to_encode = open('./test2').read()
+text_to_encode = open('./test4').read()
 print len(text_to_encode)
 encoded = h.encode(text_to_encode)
 keys = h.rev_table.keys()
 keys.sort()
-print keys
-print h.table
-for key in keys:
-    print key
-print h.offsets
-print encoded
+#print keys
+#print h.table
+#for key in keys:
+#    print key
+#print h.offsets
+#print encoded
 decoded = h.decode(encoded)
-print decoded
+#print decoded
+x = len(text_to_encode)
+y = len(encoded) / 8
+print y / float(x)
 print text_to_encode == decoded 
 
 
