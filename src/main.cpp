@@ -4,43 +4,35 @@
 #include <cassert>
 #include "HuffmanTable.h"
 #include "FreqCounter.h"
+#include "Row.h"
+#include <stdio.h>
 
 
 using namespace std;
 
-// void print(const vector<FreqCounter<char>::Freq>& freq) {
-//     cout << freq.size() << endl;
-//     for (size_t i=0; i<freq.size(); ++i) {
-//         cout << freq[i].first << " : " << freq[i].second << ", ";
-//     }
-//     cout << endl;
-// }
+extern "C" Row* runEncode(unsigned char* a_data, size_t len, Row a_table[255]);
 
 int main() {
-    // ifstream file("/Users/kent90/Movies/YouTube - CMake-CPack-CTest-CDash Open Source Tools to Build Test and Deploy C++ Software.mp4");
+    // ifstream file("./test");
     // file.seekg (0, ios::end);
     // size_t length = file.tellg();
     // file.seekg (0, ios::beg);
     // char* buffer = new char [length];
     // file.read(buffer, length);
 
-    char str[] = "aaaaabbbbb";
-    HuffmanTable h((const unsigned char*)str, 10);
-    cout << (int)h['a'].codelength << " " << (int)h['a'].code << endl;
-    cout << (int)h['b'].codelength << " " << (int)h['b'].code << endl;
-    cout << (int)h['c'].codelength << " " << (int)h['c'].code << endl;
-    cout << (int)h['d'].codelength << " " << (int)h['d'].code << endl;
+  unsigned char str[] = "abcddee";
+  unsigned int len = sizeof(str) - 1;
+  HuffmanTable h((const unsigned char*)str, len);
 
-    //    FreqCounter<unsigned char> test(str, str + 3);
-    
-    // string tableString = h.binaryString();
-
-    // HuffmanTable h2(tableString);
-
-    // assert(h2.binaryString() == tableString);
-
-    // cout << h2.binaryString() << endl;
-    
+  Row rows[255];
+  for (unsigned char i = 0; i < HuffmanTable::ALPHABET_SIZE; ++i) {
+    rows[i] = h[i];
+  }
+  Row* encoded = runEncode(str, len, rows);
+  for (unsigned int i = 0; i < len; ++i) {
+    printf("%i %i\n", encoded[i].code, encoded[i].codelength);
+  }
+  free(encoded);
     //    delete[] buffer;
-    return 0;
+  return 0;
 }

@@ -1,0 +1,46 @@
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+#include <cutil_inline.h>
+#include "Row.h"
+#include <stdio.h>
+
+__constant__ Row table[255];
+
+__global__ void encode(unsigned char* a_data, Row* a_result, size_t len, size_t num)
+{
+   unsigned int tx = threadIdx.x;
+   unsigned int bx = blockIdx.x;
+   
+   for (int i = 0; i < num; ++i) {
+     int idx = blockDim.x*bx + tx;
+     unsigned char c = a_data[idx];
+     Row row = table[c];     
+     a_result[idx] = row;
+   }
+}
+
+extern "C" {
+  Row* runEncode(unsigned char* a_data, size_t len, Row a_table[255])
+  {
+    cutilSafeCall(cudaMemcpyToSymbol(table, a_table, sizeof(Row) * 255));
+
+    void* devData = NULL;
+    void* result = NULL;
+    cutilSafeCall(cudaMalloc(&devData, len));
+    cutilSafeCall(cudaMemcpy(devData, a_data, len, cudaMemcpyHostToDevice));
+  
+    cutilSafeCall(cudaMalloc(&result, len * sizeof(Row)));
+
+    dim3 grid(10, 1, 1);
+    dim3 block(10, 1, 1);
+    encode<<<grid, block>>>((unsigned char*)devData, (Row*)result, len, 1);
+		  
+    Row* res = (Row*)calloc(len, sizeof(Row));
+    cutilSafeCall(cudaMemcpy(res, result, len * sizeof(Row), cudaMemcpyDeviceToHost));
+
+    cudaFree(devData);
+    cudaFree(result);  
+    return res;
+  }
+}
+

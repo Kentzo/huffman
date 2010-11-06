@@ -3,6 +3,7 @@
 #include "Row.h"
 #include <utility>
 #include <string>
+#include <string.h>
 
 
 class HuffmanTable {
