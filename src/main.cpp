@@ -17,16 +17,21 @@ using namespace std;
 // }
 
 int main() {
-    ifstream file("/Users/kent90/Movies/YouTube - CMake-CPack-CTest-CDash Open Source Tools to Build Test and Deploy C++ Software.mp4");
-    file.seekg (0, ios::end);
-    size_t length = file.tellg();
-    file.seekg (0, ios::beg);
-    char* buffer = new char [length];
-    file.read(buffer, length);
+    // ifstream file("/Users/kent90/Movies/YouTube - CMake-CPack-CTest-CDash Open Source Tools to Build Test and Deploy C++ Software.mp4");
+    // file.seekg (0, ios::end);
+    // size_t length = file.tellg();
+    // file.seekg (0, ios::beg);
+    // char* buffer = new char [length];
+    // file.read(buffer, length);
 
-    char str[] = "abcddee";
-    HuffmanTable h((const unsigned char*)buffer, length - 1);
-    //FreqCounter<unsigned char> test((const unsigned char*)buffer, (const unsigned char*)buffer + length);
+    char str[] = "aaaaabbbbb";
+    HuffmanTable h((const unsigned char*)str, 10);
+    cout << (int)h['a'].codelength << " " << (int)h['a'].code << endl;
+    cout << (int)h['b'].codelength << " " << (int)h['b'].code << endl;
+    cout << (int)h['c'].codelength << " " << (int)h['c'].code << endl;
+    cout << (int)h['d'].codelength << " " << (int)h['d'].code << endl;
+
+    //    FreqCounter<unsigned char> test(str, str + 3);
     
     // string tableString = h.binaryString();
 
@@ -36,6 +41,6 @@ int main() {
 
     // cout << h2.binaryString() << endl;
     
-    delete[] buffer;
+    //    delete[] buffer;
     return 0;
 }

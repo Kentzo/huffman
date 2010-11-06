@@ -1,3 +1,6 @@
 *.pyc
 *.pyo
 .idea/workspace.xml
+# emacs noise
+*~
+.#*

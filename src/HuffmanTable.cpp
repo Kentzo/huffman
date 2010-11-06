@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <iostream>
+
 
 using namespace std;
 
@@ -25,6 +25,7 @@ HuffmanTable::HuffmanTable(const unsigned char* array, size_t num) {
 }
 
 HuffmanTable::HuffmanTable(const char binaryTable[ALPHABET_SIZE]) {
+    memset(_table, 0, ALPHABET_SIZE * sizeof(Row));
     // Read bytes into vector. Each i-th byte represents length of codeword of i-th alphabet symbol
     vector<pair<unsigned char, unsigned char> > orderTable;
     for (size_t i=0; i<ALPHABET_SIZE; ++i) {
@@ -36,7 +37,8 @@ HuffmanTable::HuffmanTable(const char binaryTable[ALPHABET_SIZE]) {
     // Build table
     vector<pair<unsigned char, unsigned char> >::iterator cur = orderTable.begin(), prev = orderTable.begin(), end = orderTable.end();
     unsigned char value = 0;
-    _table[cur->second] = Row(cur->first, value);
+    Row row = {cur->first, value};
+    _table[cur->second] = row;
     ++cur;
     while (cur != end) {
         if (cur->first != 0) {
@@ -44,14 +46,17 @@ HuffmanTable::HuffmanTable(const char binaryTable[ALPHABET_SIZE]) {
             if (cur->first == prev->first) {
                 // Just increase codeword by 1
                 value += 1;
-                _table[cur->second] = Row(cur->first, value);
+                row.codelength = cur->first;
+                row.code = value;
+                _table[cur->second] = row;
             }
             // Otherwise
             else {
             // Increase codeword by 1 and _after_ that shift codeword right
                 assert((prev->first - cur->first) == 1);
                 value = (value + 1) >> 1;
-                _table[cur->second] = Row(cur->first, value);
+                row.codelength = cur->first;
+                row.code = value;
             }
             ++prev;
         }
@@ -59,11 +64,12 @@ HuffmanTable::HuffmanTable(const char binaryTable[ALPHABET_SIZE]) {
     }
 }
 
-HuffmanTable::Row HuffmanTable::operator[](unsigned char index) const {
+Row HuffmanTable::operator[](unsigned char index) const {
     return _table[index];
 }
 
 void HuffmanTable::_buildTable(const unsigned char* array, size_t num) {
+    memset(_table, 0, ALPHABET_SIZE * sizeof(Row));
     typedef FreqCounter<unsigned char> Counter;
     typedef Counter::Frequencies Frequencies;
     typedef DepthCounterNode<unsigned char> Node;
@@ -114,22 +120,24 @@ void HuffmanTable::_buildTable(const unsigned char* array, size_t num) {
     // Build table
     Nodes::iterator cur_leaf = leafs.begin(), end_leaf = leafs.end();
     Node *currentNode = *cur_leaf;
-    Row currentRow(currentNode->depth, 0x00);
+    Row currentRow = {currentNode->depth, 0};
     _table[currentNode->element] = currentRow;
     ++cur_leaf;
     while (cur_leaf != end_leaf) {
         currentNode = *cur_leaf;
         // If current codeword and next codeword have equal lengths
-        if (currentNode->depth == currentRow.first) {
+        if (currentNode->depth == currentRow.codelength) {
             // Just increase codeword by 1
-            currentRow = Row(currentNode->depth, currentRow.second + 1);
+            currentRow.codelength = currentNode->depth;
+            currentRow.code = currentRow.code + 1;
             _table[currentNode->element] = currentRow;
         }
         // Otherwise
         else {
             // Increase codeword by 1 and _after_ that shift codeword right
-            assert((currentRow.first - currentNode->depth) == 1);
-            currentRow = Row(currentNode->depth, (currentRow.second + 1) >> 1);
+            assert((currentRow.codelength - currentNode->depth) == 1);
+            currentRow.codelength = currentNode->depth;
+            currentRow.code = currentRow.code + 1;
             _table[currentNode->element] = currentRow;
         }
         ++cur_leaf;
@@ -143,11 +151,11 @@ void HuffmanTable::_buildTable(const unsigned char* array, size_t num) {
     }
 }
 
-std::string HuffmanTable::binaryString() const {
+std::string HuffmanTable::binaryTable() const {
     string result;
     result.reserve(ALPHABET_SIZE);
     for (size_t i=0; i<ALPHABET_SIZE; ++i) {
-        result += _table[i].first;
+        result += _table[i].codelength;
     }
     return result;
 }

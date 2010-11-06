@@ -20,11 +20,6 @@ protected:
 };
 
 template<typename ELEMENT_TYPE>
-bool _comparator(const typename FreqCounter<ELEMENT_TYPE>::Freq& left, const typename FreqCounter<ELEMENT_TYPE>::Freq& right);
-
-// ----
-
-template<typename ELEMENT_TYPE>
 bool _comparator_less(const typename FreqCounter<ELEMENT_TYPE>::Freq& left, const typename FreqCounter<ELEMENT_TYPE>::Freq& right) {
     return left.second < right.second;
 }
@@ -51,4 +46,20 @@ std::vector<typename FreqCounter<ELEMENT_TYPE>::Freq> FreqCounter<ELEMENT_TYPE>:
     typename FreqCounter<ELEMENT_TYPE>::Frequencies most_common(size);
     std::copy(_frequencies.begin(), _frequencies.begin() + size, most_common.begin());
     return most_common;
+}
+
+template<>
+template<typename InputIterator>
+FreqCounter<unsigned char>::FreqCounter(InputIterator cur, InputIterator end) {
+    size_t freqs[255] = {0};
+    while (cur != end) {
+        freqs[*cur] += 1;
+        ++cur;
+    }
+    for (size_t i=0; i<255; ++i) {
+        if (freqs[i] > 0) {
+            _frequencies.push_back(Freq(i, freqs[i]));
+        }
+    }
+    std::sort(_frequencies.begin(), _frequencies.end(), _comparator_less<unsigned char>);
 }
