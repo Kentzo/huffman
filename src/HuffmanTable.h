@@ -9,7 +9,7 @@
 class HuffmanTable {
     void _buildTable(const unsigned char* array, size_t num);
  public:
-    enum {ALPHABET_SIZE = 255};
+    enum {ALPHABET_SIZE = 256};
     //    typedef std::pair<unsigned char, unsigned char> Row; // <lenght in bits, rightmost 8 bit>
 
     explicit HuffmanTable(const unsigned char* array, size_t num);
