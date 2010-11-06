@@ -11,6 +11,7 @@ __global__ void encode(unsigned char* a_data, Row* a_result, size_t len, size_t 
   unsigned int tx = threadIdx.x;
   unsigned int bx = blockIdx.x;
   unsigned int idx = blockDim.x*bx + tx;
+
   for (int i = 0; i < num; ++i) {
      int cidx = idx + i;
 
@@ -32,7 +33,7 @@ extern "C" {
   
     cutilSafeCall(cudaMalloc(&result, len * sizeof(Row)));
 
-    dim3 grid(65535, 1, 1);
+    dim3 grid(60, 1, 1);
     dim3 block(512, 1, 1);
     encode<<<grid, block>>>((unsigned char*)devData, (Row*)result, len, 1);
 		  

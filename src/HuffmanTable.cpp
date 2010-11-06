@@ -135,7 +135,7 @@ void HuffmanTable::_buildTable(const unsigned char* array, size_t num) {
         // Otherwise
         else {
             // Increase codeword by 1 and _after_ that shift codeword right
-            assert((currentRow.codelength - currentNode->depth) == 1);
+            //assert((currentRow.codelength - currentNode->depth) == 1);
             currentRow.codelength = currentNode->depth;
             currentRow.code = (currentRow.code + 1) >> 1;
             _table[currentNode->element] = currentRow;
