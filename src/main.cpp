@@ -31,9 +31,14 @@ int main() {
   // work on GPU
   Row* encoded = runEncode((unsigned char*)buffer, len, rows);
 
+  Row* cpu_encoded = new Row[len];
   //work on CPU
-  
-  
+  for (unsigned int i = 0; i < len; ++i) {
+      cpu_encoded[i] = rows[buffer[i]];
+  }
+
+  cout << memcmp(encoded, cpu_encoded, len) << endl;
+  delete[] cpu_encoded;
 
   // for (unsigned int i = 0; i < len; ++i) {
   //   printf("%i %i\n", encoded[i].code, encoded[i].codelength);
