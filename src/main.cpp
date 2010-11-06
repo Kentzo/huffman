@@ -46,6 +46,24 @@ int main() {
       break;
     }
   }
+
+  char *decoded = new char[len];
+  for (unsigned int i=0; i<len; ++i) {
+      Row curRow = cpu_encoded[i];
+      unsigned char c = 0;
+      for (unsigned char i=0; i<HuffmanTable::ALPHABET_SIZE; ++i) {
+          if (rows[i].code == curRow.code && rows[i].codelength == curRow.codelength) {
+              c = i;
+              break;
+          }
+      }
+      decoded[i] = c;
+  }
+
+  cout << "Compare strings: " << memcmp(decoded, buffer, len) << endl;
+
+  delete[] decoded;
+
   delete[] cpu_encoded;
 
   // for (unsigned int i = 0; i < len; ++i) {
