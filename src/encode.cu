@@ -4,7 +4,7 @@
 #include "Row.h"
 #include <stdio.h>
 
-__constant__ Row table[255];
+__constant__ Row table[256];
 
 __global__ void encode(unsigned char* a_data, Row* a_result, size_t len, size_t num)
 {  
@@ -14,7 +14,6 @@ __global__ void encode(unsigned char* a_data, Row* a_result, size_t len, size_t 
 
   for (int i = 0; i < num; ++i) {
      int cidx = idx + i;
-
      unsigned char c = a_data[cidx];
      Row row = table[c];     
      a_result[cidx] = row;
@@ -22,9 +21,9 @@ __global__ void encode(unsigned char* a_data, Row* a_result, size_t len, size_t 
 }
 
 extern "C" {
-  Row* runEncode(unsigned char* a_data, size_t len, Row a_table[255])
+  Row* runEncode(unsigned char* a_data, size_t len, Row a_table[256])
   {
-    cutilSafeCall(cudaMemcpyToSymbol(table, a_table, sizeof(Row) * 255));
+    cutilSafeCall(cudaMemcpyToSymbol(table, a_table, sizeof(Row) * 256));
 
     void* devData = NULL;
     void* result = NULL;
@@ -33,7 +32,7 @@ extern "C" {
   
     cutilSafeCall(cudaMalloc(&result, len * sizeof(Row)));
 
-    dim3 grid(60, 1, 1);
+    dim3 grid(44050, 1, 1);
     dim3 block(512, 1, 1);
     encode<<<grid, block>>>((unsigned char*)devData, (Row*)result, len, 1);
 		  
